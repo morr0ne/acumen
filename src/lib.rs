@@ -1,8 +1,10 @@
 mod cpuinfo;
 mod os_release;
+mod passwd;
 
 pub use cpuinfo::{Cpu, Cpuinfo};
 pub use os_release::OsRelease;
+pub use passwd::{getpwuid, Passwd};
 
 macro_rules! impl_getters {
     ($($getter:ident:$name:literal)+) => {
