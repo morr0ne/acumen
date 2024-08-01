@@ -1,12 +1,12 @@
 use std::{
     fs::File,
-    io::{BufRead, BufReader, Error as IoError},
+    io::{self, BufRead, BufReader},
 };
 
 use rustix::process::{Gid, Uid};
 
 pub fn getpwuid(uid: Uid) -> Option<Passwd> {
-    let mut parser = Parser::new().ok()?;
+    let mut parser = PasswdEntries::new().ok()?;
 
     while let Some(entry) = parser.next_entry().ok()? {
         if entry.uid == uid {
@@ -29,32 +29,11 @@ pub struct Passwd {
     pub shell: String,
 }
 
-pub struct Parser<R> {
-    reader: R,
-    buf: String,
-}
-
-impl Parser<BufReader<File>> {
-    pub fn new() -> Result<Self, IoError> {
-        let file = File::open("/etc/passwd")?;
-        let reader = BufReader::new(file);
-
-        Ok(Self {
-            reader,
-            buf: String::new(),
-        })
-    }
-
-    pub fn next_entry(&mut self) -> Result<Option<Passwd>, IoError> {
-        self.buf.clear();
-
-        self.reader.read_line(&mut self.buf)?;
-
-        Ok(Passwd::from_buf(&self.buf))
-    }
-}
-
 impl Passwd {
+    pub fn entries() -> Result<PasswdEntries, io::Error> {
+        PasswdEntries::new()
+    }
+
     fn from_buf(buf: &str) -> Option<Self> {
         let mut entries = buf.splitn(7, |s| s == ':');
 
@@ -86,5 +65,30 @@ impl Passwd {
             dir,
             shell,
         })
+    }
+}
+
+pub struct PasswdEntries {
+    reader: BufReader<File>,
+    buf: String,
+}
+
+impl PasswdEntries {
+    pub fn new() -> Result<Self, io::Error> {
+        let file = File::open("/etc/passwd")?;
+        let reader = BufReader::new(file);
+
+        Ok(Self {
+            reader,
+            buf: String::new(),
+        })
+    }
+
+    pub fn next_entry(&mut self) -> Result<Option<Passwd>, io::Error> {
+        self.buf.clear();
+
+        self.reader.read_line(&mut self.buf)?;
+
+        Ok(Passwd::from_buf(&self.buf))
     }
 }
