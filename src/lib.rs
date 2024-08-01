@@ -1,8 +1,10 @@
 mod cpuinfo;
+mod meminfo;
 mod os_release;
 mod passwd;
 
 pub use cpuinfo::{Cpu, Cpuinfo};
+pub use meminfo::Meminfo;
 pub use os_release::OsRelease;
 pub use passwd::{getpwuid, Passwd, PasswdEntries};
 
@@ -20,6 +22,15 @@ macro_rules! impl_getters {
         $(
         #[inline]
         pub fn $getter(&self) -> Option<&str> {
+            self.get($name)
+        }
+        )
+    +};
+
+    ($ret:ty, $($getter:ident:$name:literal)+) => {
+        $(
+        #[inline]
+        pub fn $getter(&self) -> Option<$ret> {
             self.get($name)
         }
         )
