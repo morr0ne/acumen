@@ -6,7 +6,7 @@ mod passwd;
 pub use cpuinfo::{Cpu, Cpuinfo};
 pub use meminfo::Meminfo;
 pub use os_release::OsRelease;
-pub use passwd::{getpwuid, Passwd, PasswdEntries};
+pub use passwd::{Passwd, PasswdEntries, getpwuid};
 
 macro_rules! impl_getters {
     ($($getter:ident:$name:literal)+) => {
