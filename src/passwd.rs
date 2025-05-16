@@ -40,17 +40,9 @@ impl Passwd {
         let name = entries.next()?.to_string();
         let passwd = entries.next()?.to_string();
 
-        let uid = entries
-            .next()?
-            .parse()
-            .map(|n| unsafe { Uid::from_raw(n) })
-            .ok()?;
+        let uid = entries.next()?.parse().map(Uid::from_raw).ok()?;
 
-        let gid = entries
-            .next()?
-            .parse()
-            .map(|n| unsafe { Gid::from_raw(n) })
-            .ok()?;
+        let gid = entries.next()?.parse().map(Gid::from_raw).ok()?;
 
         let gecos = entries.next()?.to_string();
         let dir = entries.next()?.to_string();
