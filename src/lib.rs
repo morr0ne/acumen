@@ -1,9 +1,11 @@
 mod cpuinfo;
+mod group;
 mod meminfo;
 mod os_release;
 mod passwd;
 
 pub use cpuinfo::{Cpu, Cpuinfo};
+pub use group::{GroupEntries, GroupEntry, GroupParseError};
 pub use meminfo::Meminfo;
 pub use os_release::OsRelease;
 pub use passwd::{Passwd, PasswdEntries, getpwuid};
